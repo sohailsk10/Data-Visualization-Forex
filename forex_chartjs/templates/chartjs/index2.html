@@ -1,0 +1,124 @@
+{% load static %}
+
+<html lang="en">
+<head>
+    <style>
+    table,
+    th,
+    td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    th,
+    td {
+        padding: 10px;
+    }
+    </style>
+
+
+	<!-- Load plotly.js into the DOM -->
+	<script src='https://cdn.plot.ly/plotly-2.16.1.min.js'></script>
+</head>
+
+<body>
+<table style="width:100%">
+    <caption>Prediction Value of Forex</caption>
+    <tr>
+        <th>Currency</th>
+        <th>Time Interval</th>
+        <th>High</th>
+        <th>High Prediction</th>
+        <th>Date Time Hit High</th>
+        <th>Low</th>
+        <th>Low Prediction</th>
+        <th>Date Time Hit Low</th>
+    </tr>
+    {% for i in high_low %}
+    <tr>
+        {% for j in i %}
+        <td>{{j}}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+
+</table>
+
+<table style="width:100%">
+    <caption>Historical Data</caption>
+    <tr>
+        <th>Current Time</th>
+        <th>Currency</th>
+        <th>Time Interval</th>
+        <th>Actual High</th>
+        <th>Actual Low</th>
+        <th>Predicted High</th>
+        <th>Predicted Low</th>
+        <th>Target DateTime</th>
+        <th>DateTime Hit High</th>
+        <th>DateTime Hit Low</th>
+    </tr>
+    {% for i in historical_data %}
+    <tr>
+        {% for j in i %}
+        <td>{{j}}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+
+</table>
+
+<!--   <script src="{% static '\js\index.js' %}"></script>-->
+	<div id='myDiv'><!-- Plotly chart will be drawn inside this DIV --></div>
+
+	<div>
+		<script>
+			var data = [
+	{
+		domain: { x: [0, 0.5], y: [0.5, 1] },
+		value: {{ Buy }},
+		title: { text: "BUY" },
+		type: "indicator",
+		mode: "gauge+number"
+	}
+];
+
+var layout = { width: 600, height: 500, margin: { t: 0, b: 0 } };
+Plotly.newPlot('myDiv', data, layout);
+		</script>
+	</div>
+
+<!--   <script src="{% static '\js\index.js' %}"></script>-->
+	<div id='myDiv1'><!-- Plotly chart will be drawn inside this DIV --></div>
+    <div>
+		<script>
+			var data = [
+	{
+		domain: { x: [0, 0.5], y: [0.5, 1] },
+		value: {{ Sell }},
+		title: { text: "SELL" },
+		type: "indicator",
+		mode: "gauge+number"
+	}
+];
+
+var layout = { width: 600, height: 500, margin: { t: 1, b: 1 } };
+Plotly.newPlot('myDiv1', data, layout);
+		</script>
+	</div>
+
+<!-- START CURRENCIES -->
+            <div class="form-item">
+                <p class="form-heading">
+                    Currency
+                </p>
+                <select name="currency" id="currency">
+                    <option value="default">-- SELECT --</option>
+                    {% for i in Get_currency%}
+                    <option value="{{i.currency_name}}"> {{i.currency_name}}</option>
+                    {% endfor %}
+                </select>
+<!--                <input type="button" value="Get Currencies" onclick="get_currencies()"/>-->
+            </div>
+            <!-- END CURRENCIES -->
+
+</html>
