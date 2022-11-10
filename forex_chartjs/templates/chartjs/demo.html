@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!--<script src="forex_chartjs/templates/js/demo.js"></script>-->
+
+</head>
+<body>
+<form>
+    <div class="form-item">
+        <p class="form-heading">
+            Select Currency
+        </p>
+<!--        <select name="currency" id="currency" onchange="onSeriesChange(this)">-->
+        <select name="currency" id="currency">
+            <option value="default">-- SELECT --</option>
+            {% for i in Get_currency%}
+            <!--                    <option value="{{i.currency_name}}"> {{i.currency_name}}</option>-->
+            <option value="{{i.currency_name}}"> {{i.currency_name}} </option>
+            {% endfor %}
+        </select>
+        <!--                <input type="button" value="Get Currencies" onclick="get_currencies()"/>-->
+    </div>
+
+    <div class="form-item">
+        <p class="form-heading">
+            Select Time Interval
+        </p>
+        <select name="interval" id="Get_interval">
+            <option value="default">-- SELECT --</option>
+            {% for i in Get_interval %}
+            <!--                    <option value="{{i.currency_name}}"> {{i.currency_name}}</option>-->
+            <option value="{{i.minutes}}"> {{i.minutes}}</option>
+            {% endfor %}
+        </select>
+        <!--                <input type="button" value="Get Currencies" onclick="get_currencies()"/>-->
+    </div>
+</form>
+
+<table id="results">
+    <thead>
+    <tr>
+        <th>Currency</th>
+        <th>Time Interval</th>
+        <th>High</th>
+        <th>High Prediction</th>
+        <th>Date Time Hit High</th>
+        <th>Low</th>
+        <th>Low Prediction</th>
+        <th>Date Time Hit Low</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for i in high_low %}
+    <tr>
+        {% for j in i %}
+        <td>{{j}}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<script>
+let queryParams = new URLSearchParams(window.location.search);
+
+let currency_ = queryParams.get("currency"); // return john
+let interval = queryParams.get("interval"); // return sales
+
+console.log("Params" + currency_ );
+console.log("Params Interval" + interval );
+
+
+if (currency_ == null){
+const dd = document.getElementById ('currency');
+dd.selectedIndex = [...dd.options].findIndex (option => option.text === "-- SELECT --");
+}
+else{
+const dd = document.getElementById ('currency');
+dd.selectedIndex = [...dd.options].findIndex (option => option.text === currency_);
+
+}
+
+var PAGE_URL = "http://127.0.0.1:8000/"
+console.log("This is started");
+var $selectSeries = $('#currency');
+   console.log($selectSeries);
+  $selectEpisode = $('#Get_interval');
+  $episodeOptions = $selectEpisode.find('option');
+<!--  $tbody = $('#results tbody');-->
+<!--  $rows = $tbody.find('tr');-->
+
+function onSeriesChange() {
+console.log("This is Seires change currency");
+  var selectedSeries = $selectSeries.val() || '';
+  console.log(selectedSeries);
+  params = "?currency="+selectedSeries;
+  console.log(params);
+  window.location.replace(PAGE_URL+params);
+<!--    $filteredOptions = $episodeOptions.prop('selected', false).detach();-->
+
+
+<!--  $filteredOptions = $filteredOptions.filter('[data-series="' + selectedSeries + '"]');-->
+<!--  $selectEpisode.append($filteredOptions).prop('disabled', $filteredOptions.length == 0);-->
+
+<!--  if ($filteredOptions.length) {-->
+<!--    $filteredOptions.first().prop('selected', true);-->
+<!--  } else {-->
+<!--    $selectEpisode.append($episodeOptions.filter('.placeholder')).prop('disabled', true);-->
+<!--  }-->
+
+<!--  filterTable();-->
+}
+
+function onEpisodeChange() {
+<!--  filterTable();-->
+}
+
+<!--function filterTable() {-->
+<!--  var $filteredRows = $rows.detach(),-->
+<!--    selectedSeries = $selectSeries.val() || '',-->
+<!--    selectedEpisode = $selectEpisode.val() || '';-->
+
+<!--  if (selectedSeries != '') {-->
+<!--    $filteredRows = $filteredRows.filter('[data-series="' + selectedSeries + '"]');-->
+<!--    $filteredRows = $filteredRows.filter('[data-episode="' + selectedEpisode + '"]');-->
+<!--  }-->
+
+<!--  $tbody.append($filteredRows);-->
+<!--}-->
+
+<!--filterTable();-->
+$selectSeries.on('change', onSeriesChange);
+$selectEpisode.on('change', onEpisodeChange);
+
+
+
+</script>
+</body>
+</html>
