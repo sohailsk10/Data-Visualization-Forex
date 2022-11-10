@@ -16,8 +16,12 @@ class HomeView(View):
             database="postgres", user='postgres', password='admin', host='127.0.0.1', port='5432'
         )
 
-        # if request.GET.get('currency'):
-        #     featured_filter = request.GET.get('currency')
+        currency__ = ""
+
+
+        if request.GET.get('currency'):
+            currency__ = request.GET.get('currency')
+            print("featured_filter", currency__)
         #     listings = Currency.objects.filter(featured_choices=featured_filter)
         #     print("---------", featured_filter, listings)
         # else:
@@ -38,14 +42,21 @@ class HomeView(View):
 
         sql_query_buy = "SELECT buy from currency_buy_sell where currency = '" + currency + "' "
         cursor.execute(sql_query_buy)
-        result = cursor.fetchall()[0][0]
+        result = cursor.fetchall()
         sql_query_sell = "SELECT sell from currency_buy_sell where currency = '" + currency + "' "
         cursor.execute(sql_query_sell)
-        result_sell = cursor.fetchall()[0][0]
+        result_sell = cursor.fetchall()
+        print("result_sell", result_sell)
 
-        sql_query_predicted_high_low = "select * from predicted_high_low"
+        if currency__ == '':
+            sql_query_predicted_high_low = "select * from predicted_high_low"
+        else:
+            sql_query_predicted_high_low = "select * from predicted_high_low where currency = '" + currency__ + "'"
+
         cursor.execute(sql_query_predicted_high_low)
         result_high_low = cursor.fetchall()
+        print("-----", result_high_low)
+
 
         sql_query_historical_data = "Select * from historical_data where currency = '" + currency + "' "
         cursor.execute(sql_query_historical_data)
