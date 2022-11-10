@@ -11,10 +11,27 @@ from rest_framework import viewsets
 
 
 class HomeView(View):
-    def get(self, request, *args, **kwargs):
+    def get(self, request, template_name = "index2.html",  *args, **kwargs):
         mydb = psycopg2.connect(
             database="postgres", user='postgres', password='admin', host='127.0.0.1', port='5432'
         )
+
+        # if request.GET.get('currency'):
+        #     featured_filter = request.GET.get('currency')
+        #     listings = Currency.objects.filter(featured_choices=featured_filter)
+        #     print("---------", featured_filter, listings)
+        # else:
+        #     listings = Currency.objects.all()
+
+        # context_dict = {'listings': listings}
+
+        # txt = request.POST.get('currency')
+        # answer = request.GET['currency']
+        # print("answer", answer)
+        # print("TEXT", txt)
+        # if request.method == 'POST':
+        #     selected_value = request.POST.get('currency')
+        #     print("selected_value", selected_value)
         currency = "AUDUSD"
         mydb.autocommit = True
         cursor = mydb.cursor()
@@ -26,7 +43,7 @@ class HomeView(View):
         cursor.execute(sql_query_sell)
         result_sell = cursor.fetchall()[0][0]
 
-        sql_query_predicted_high_low = "select * from predicted_high_low where currency = '" + currency + "' "
+        sql_query_predicted_high_low = "select * from predicted_high_low"
         cursor.execute(sql_query_predicted_high_low)
         result_high_low = cursor.fetchall()
 
@@ -35,16 +52,35 @@ class HomeView(View):
         result_historical = cursor.fetchall()
 
         currency_ = Currency.objects.all()
+        time_interval = Interval.objects.all()
+        # sql_query_currency = "Select distinct currency from predicted_high_low"
+        # cursor.execute(sql_query_currency)
+        # currency_ = cursor.fetchall()
+        # print("currency_", currency_)
+
 
         context = {
             "Buy": result,
             "Sell": result_sell,
             "high_low": result_high_low,
             "historical_data": result_historical,
-            "Get_currency": currency_
+            "Get_currency": currency_,
+            "Get_interval": time_interval,
         }
 
-        return render(request, 'chartjs/index2.html', context)
+        return render(request, 'chartjs/demo.html', context)
+        # return render(request, context, template_name)
+
+# def filter_data(request):
+#     print("POST", request.POST)
+#     print("Get", request.GET)
+
+
+        # def leads_edit(request, id):
+        #     leads = Currency.objects.get(id=id)
+        #     context = {'leads': leads}
+        #     template_name = 'file/edit.html'
+        #     return render(request, template_name, context)
         # return Response(result)
         # return render(request, 'chartjs/index2.html')
 

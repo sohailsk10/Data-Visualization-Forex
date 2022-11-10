@@ -9,10 +9,16 @@
         border: 1px solid black;
         border-collapse: collapse;
     }
+    tr:nth-child(even){background-color: #f2f2f2}
+    tr:hover {background-color: coral;}
     th,
     td {
         padding: 10px;
     }
+    th {
+  background-color: #04AA6D;
+  color: white;
+}
     </style>
 
 
@@ -21,8 +27,35 @@
 </head>
 
 <body>
+
+<!--{% for id, obj in leads.SOURCE %}-->
+<!--     <option value="{{ id }}"{% if leads.source == id %} selected="selected"{% endif %}>{{ obj }}</option>-->
+<!--{% endfor %}-->
+            <div class="form-item">
+                <p class="form-heading">
+                   Select Currency
+                </p>
+                <select name="currency" id="currency">
+                    <option value="default">-- SELECT --</option>
+                    {% for i in Get_currency%}
+<!--                    <option value="{{i.currency_name}}"> {{i.currency_name}}</option>-->
+                    <option value="{{i.currency_name}}"> {{i.currency_name}}</option>
+                    {% endfor %}
+                </select>
+<!--                <input type="button" value="Get Currencies" onclick="get_currencies()"/>-->
+            </div>
+            <!-- END CURRENCIES -->
+
+<!--<form method="POST">-->
+<!--<select name="item_id">-->
+<!--{% for entry in currency_ %}-->
+<!--    <option value="{{ entry.id }}">{{ entry.name }}</option>-->
+<!--{% endfor %}-->
+<!--</select>-->
+<!--</form>-->
+
 <table style="width:100%">
-    <caption>Prediction Value of Forex</caption>
+    <h2><caption>Prediction Value of Forex</caption></h2>
     <tr>
         <th>Currency</th>
         <th>Time Interval</th>
@@ -44,7 +77,8 @@
 </table>
 
 <table style="width:100%">
-    <caption>Historical Data</caption>
+
+    <h2><caption>Historical Data</caption></h2>
     <tr>
         <th>Current Time</th>
         <th>Currency</th>
@@ -82,7 +116,7 @@
 	}
 ];
 
-var layout = { width: 600, height: 500, margin: { t: 0, b: 0 } };
+var layout = { width: 500, height: 500, margin: { t: 1, b: 1 } };
 Plotly.newPlot('myDiv', data, layout);
 		</script>
 	</div>
@@ -101,24 +135,11 @@ Plotly.newPlot('myDiv', data, layout);
 	}
 ];
 
-var layout = { width: 600, height: 500, margin: { t: 1, b: 1 } };
+var layout = { width: 500, height: 500, margin: { t: 1, b: 1 } };
 Plotly.newPlot('myDiv1', data, layout);
 		</script>
 	</div>
 
-<!-- START CURRENCIES -->
-            <div class="form-item">
-                <p class="form-heading">
-                    Currency
-                </p>
-                <select name="currency" id="currency">
-                    <option value="default">-- SELECT --</option>
-                    {% for i in Get_currency%}
-                    <option value="{{i.currency_name}}"> {{i.currency_name}}</option>
-                    {% endfor %}
-                </select>
-<!--                <input type="button" value="Get Currencies" onclick="get_currencies()"/>-->
-            </div>
-            <!-- END CURRENCIES -->
+
 
 </html>

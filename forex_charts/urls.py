@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.HomeView.as_view()),
     path('v1/', include('forex_chartjs.urls')),
+
     # path('test-api', views.get_data),
     # path('api', views.ChartData.as_view()),
 ]
