@@ -22,20 +22,7 @@ class HomeView(View):
         if request.GET.get('currency'):
             currency__ = request.GET.get('currency')
             print("featured_filter", currency__)
-        #     listings = Currency.objects.filter(featured_choices=featured_filter)
-        #     print("---------", featured_filter, listings)
-        # else:
-        #     listings = Currency.objects.all()
 
-        # context_dict = {'listings': listings}
-
-        # txt = request.POST.get('currency')
-        # answer = request.GET['currency']
-        # print("answer", answer)
-        # print("TEXT", txt)
-        # if request.method == 'POST':
-        #     selected_value = request.POST.get('currency')
-        #     print("selected_value", selected_value)
         currency = "AUDUSD"
         mydb.autocommit = True
         cursor = mydb.cursor()
@@ -46,7 +33,6 @@ class HomeView(View):
         sql_query_sell = "SELECT sell from currency_buy_sell where currency = '" + currency + "' "
         cursor.execute(sql_query_sell)
         result_sell = cursor.fetchall()
-        print("result_sell", result_sell)
 
         if currency__ == '':
             sql_query_predicted_high_low = "select * from predicted_high_low"
@@ -64,10 +50,6 @@ class HomeView(View):
 
         currency_ = Currency.objects.all()
         time_interval = Interval.objects.all()
-        # sql_query_currency = "Select distinct currency from predicted_high_low"
-        # cursor.execute(sql_query_currency)
-        # currency_ = cursor.fetchall()
-        # print("currency_", currency_)
 
 
         context = {

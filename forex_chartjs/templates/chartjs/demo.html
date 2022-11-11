@@ -11,12 +11,12 @@
         <p class="form-heading">
             Select Currency
         </p>
-<!--        <select name="currency" id="currency" onchange="onSeriesChange(this)">-->
+        <!--        <select name="currency" id="currency" onchange="onSeriesChange(this)">-->
         <select name="currency" id="currency">
             <option value="default">-- SELECT --</option>
             {% for i in Get_currency%}
             <!--                    <option value="{{i.currency_name}}"> {{i.currency_name}}</option>-->
-            <option value="{{i.currency_name}}"> {{i.currency_name}} </option>
+            <option value="{{i.currency_name}}"> {{i.currency_name}}</option>
             {% endfor %}
         </select>
         <!--                <input type="button" value="Get Currencies" onclick="get_currencies()"/>-->
@@ -62,6 +62,16 @@
 </table>
 
 <script>
+
+var timer;
+        function startTimer() {
+            timer = setInterval(function()
+            {
+                alert("5 seconds are up");
+                console.log(timer);
+            }, 5000);
+        }
+
 let queryParams = new URLSearchParams(window.location.search);
 
 let currency_ = queryParams.get("currency"); // return john
@@ -91,8 +101,14 @@ var $selectSeries = $('#currency');
 <!--  $rows = $tbody.find('tr');-->
 
 function onSeriesChange() {
+<!--setInterval(function()-->
+<!--            {-->
+<!--                alert("5 seconds are up");-->
+<!--                console.log(timer);-->
+<!--            }, 5000);-->
 console.log("This is Seires change currency");
   var selectedSeries = $selectSeries.val() || '';
+  setInterval(selectedSeries, 5000);
   console.log(selectedSeries);
   params = "?currency="+selectedSeries;
   console.log(params);
@@ -132,6 +148,7 @@ function onEpisodeChange() {
 <!--filterTable();-->
 $selectSeries.on('change', onSeriesChange);
 $selectEpisode.on('change', onEpisodeChange);
+
 
 
 
