@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src='https://cdn.plot.ly/plotly-2.16.1.min.js'></script>
     <!--<script src="forex_chartjs/templates/js/demo.js"></script>-->
 
 </head>
@@ -37,7 +38,7 @@
     </div>
 </form>
 
-<table id="results">
+<table id="results"  align="Left | Top">
     <thead>
     <tr>
         <th>Currency</th>
@@ -60,6 +61,44 @@
     {% endfor %}
     </tbody>
 </table>
+
+	<div id='myDiv'><!-- Plotly chart will be drawn inside this DIV --></div>
+
+	<div>
+		<script>
+			var data = [
+	{
+		domain: { x: [0, 0.5], y: [0.5, 1] },
+		value: {{ Buy }},
+		title: { text: "BUY" },
+		type: "indicator",
+		mode: "gauge+number"
+	}
+];
+
+var layout = { width: 400, height: 400, margin: { t: 1, b: 1 } };
+Plotly.newPlot('myDiv', data, layout);
+		</script>
+	</div>
+
+	<div id='myDiv1'><!-- Plotly chart will be drawn inside this DIV --></div>
+
+	<div>
+		<script>
+			var data = [
+	{
+		domain: { x: [0, 0.5], y: [0.5, 1] },
+		value: {{ Sell }},
+		title: { text: "SELL" },
+		type: "indicator",
+		mode: "gauge+number"
+	}
+];
+
+var layout = { width: 500, height: 500, margin: { t: 1, b: 1 } };
+Plotly.newPlot('myDiv1', data, layout);
+		</script>
+	</div>
 
 <script>
 
@@ -110,7 +149,7 @@ console.log("This is Seires change currency");
   var selectedSeries = $selectSeries.val() || '';
   setInterval(selectedSeries, 5000);
   console.log(selectedSeries);
-  params = "?currency="+selectedSeries;
+  params = "?currency=AUDUSD"+selectedSeries;
   console.log(params);
   window.location.replace(PAGE_URL+params);
 <!--    $filteredOptions = $episodeOptions.prop('selected', false).detach();-->

@@ -17,51 +17,73 @@ class HomeView(View):
         )
 
         currency__ = ""
-
+        interval__ = ""
 
         if request.GET.get('currency'):
             currency__ = request.GET.get('currency')
-            print("featured_filter", currency__)
+            print("Currency List", currency__)
+
+        if request.GET.get('interval'):
+            interval__ = request.GET.get('interval')
+            interval__ = interval__+"Min"
+            print("Time Interval", interval__)
 
         currency = "AUDUSD"
+        time_interval = "15Min"
         mydb.autocommit = True
         cursor = mydb.cursor()
 
-        sql_query_buy = "SELECT buy from currency_buy_sell where currency = '" + currency + "' "
+        if currency__ == '':
+            sql_query_buy = "SELECT buy from currency_buy_sell where currency = '" + currency + "' "
+        else:
+            sql_query_buy = "SELECT buy from currency_buy_sell where currency = '" + currency__ + "' "
         cursor.execute(sql_query_buy)
-        result = cursor.fetchall()
-        sql_query_sell = "SELECT sell from currency_buy_sell where currency = '" + currency + "' "
+        result_buy = cursor.fetchall()[0][0]
+        print("result_buy", result_buy)
+
+        if currency__ == '':
+            sql_query_sell = "SELECT buy from currency_buy_sell where currency = '" + currency + "' "
+        else:
+            sql_query_sell = "SELECT buy from currency_buy_sell where currency = '" + currency__ + "' "
         cursor.execute(sql_query_sell)
-        result_sell = cursor.fetchall()
+        result_sell = cursor.fetchall()[0][0]
 
         if currency__ == '':
             sql_query_predicted_high_low = "select * from predicted_high_low"
         else:
             sql_query_predicted_high_low = "select * from predicted_high_low where currency = '" + currency__ + "'"
 
+
         cursor.execute(sql_query_predicted_high_low)
         result_high_low = cursor.fetchall()
-        print("-----", result_high_low)
 
+        if currency__!='' and interval__=='':
+            sql_query_historical_data = "Select * from historical_data where currency = '" + currency__ + "'"
+        elif currency__!='' and interval__!='' :
+            sql_query_historical_data = "Select * from historical_data where currency = '" + currency__ + "' and time_interval = '" + interval__ + "'"
+        else:
+            sql_query_historical_data = "Select * from historical_data"
 
-        sql_query_historical_data = "Select * from historical_data where currency = '" + currency + "' "
+        print("sql_query_historical_data", sql_query_historical_data)
         cursor.execute(sql_query_historical_data)
         result_historical = cursor.fetchall()
 
         currency_ = Currency.objects.all()
         time_interval = Interval.objects.all()
+        print("Time Interval", time_interval)
 
 
         context = {
-            "Buy": result,
+            "Buy": result_buy,
             "Sell": result_sell,
             "high_low": result_high_low,
             "historical_data": result_historical,
             "Get_currency": currency_,
             "Get_interval": time_interval,
+            "currency":currency__
         }
 
-        return render(request, 'chartjs/demo.html', context)
+        return render(request, 'chartjs/demo_v1.html', context)
         # return render(request, context, template_name)
 
 # def filter_data(request):
