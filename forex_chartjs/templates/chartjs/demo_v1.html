@@ -3,46 +3,122 @@
 <head>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src='https://cdn.plot.ly/plotly-2.16.1.min.js'></script>
-
     <style>
-    table,
-    th,
-    td {
-        border: 1px solid black;
-        border-collapse: collapse;
-    }
-    tr:nth-child(even){background-color: #f2f2f2}
-    tr:hover {background-color: coral;}
-    th,
-    td {
-        padding: 10px;
-    }
-    th {
+        #customers {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#customers td, #customers th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#customers tr:nth-child(even){background-color: #f2f2f2;}
+
+#customers tr:hover {background-color: #ddd;}
+
+#customers th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
   background-color: #04AA6D;
   color: white;
 }
-    </style>
-    <!--<script src="forex_chartjs/templates/js/demo.js"></script>-->
+</style>
+
+    <style>
+#hist_table {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  overflow:auto;
+}
+
+#hist_table td, #customers th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#hist_table tr:nth-child(even){background-color: #f2f2f2;}
+
+#hist_table tr:hover {background-color: #ddd;}
+
+#hist_table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: #04AA6D;
+  color: black;
+}
+</style>
+
+<style>
+#current_price {
+  border: 2px solid;
+  padding: 20px;
+  width: 250px;
+  resize: horizontal;
+  overflow: auto;
+ color:blue;
+}
+</style>
 
 </head>
 <body>
+<h1>Current Price</h1>
+<div id = "current_price">
+
+    <p style="font-size: 30px"> {{current_price}} </p>
+    </div>
+
 <form>
-
-    <div class="form-item">
-
+    <div class="dropdown">
         <p class="form-heading">
             Select Currency
         </p>
-        <!--        <select name="currency" id="currency" onchange="onSeriesChange(this)">-->
         <select name="currency" id="currency">
             <option value="default">-- SELECT --</option>
             {% for i in Get_currency%}
-            <!--                    <option value="{{i.currency_name}}"> {{i.currency_name}}</option>-->
             <option value="{{i.currency_name}}"> {{i.currency_name}}</option>
             {% endfor %}
         </select>
-        <!--                <input type="button" value="Get Currencies" onclick="get_currencies()"/>-->
     </div>
+
+<!--      <div class="dropdown">-->
+<!--  <button class="dropbtn">Dropdown</button>-->
+<!--  <div class="dropdown-content" id="currency">-->
+<!--    {% for i in Get_currency%}-->
+<!--      <a>{{i.currency_name}}</a>-->
+<!--      {% endfor %}-->
+<!--&lt;!&ndash;    <a href="#home">Home</a>&ndash;&gt;-->
+<!--&lt;!&ndash;    <a href="#about">About</a>&ndash;&gt;-->
+<!--&lt;!&ndash;    <a href="#contact">Contact</a>&ndash;&gt;-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--<script>-->
+<!--/* When the user clicks on the button,-->
+<!--toggle between hiding and showing the dropdown content */-->
+<!--function myFunction() {-->
+<!--  document.getElementById("myDropdown").classList.toggle("show");-->
+<!--}-->
+
+<!--// Close the dropdown if the user clicks outside of it-->
+<!--window.onclick = function(event) {-->
+<!--  if (!event.target.matches('.dropbtn')) {-->
+<!--    var dropdowns = document.getElementsByClassName("dropdown-content");-->
+<!--    var i;-->
+<!--    for (i = 0; i < dropdowns.length; i++) {-->
+<!--      var openDropdown = dropdowns[i];-->
+<!--      if (openDropdown.classList.contains('show')) {-->
+<!--        openDropdown.classList.remove('show');-->
+<!--      }-->
+<!--    }-->
+<!--  }-->
+<!--}-->
+<!--</script>-->
 
     <div class="form-item">
         <p class="form-heading">
@@ -51,15 +127,12 @@
         <select name="interval" id="interval">
             <option value="default">-- SELECT --</option>
             {% for i in Get_interval %}
-            <!--                    <option value="{{i.currency_name}}"> {{i.currency_name}}</option>-->
             <option value="{{i.minutes}}"> {{i.minutes}}</option>
             {% endfor %}
         </select>
-        <!--                <input type="button" value="Get Currencies" onclick="get_currencies()"/>-->
     </div>
 </form>
-
-<div id='myDiv'><!-- Plotly chart will be drawn inside this DIV --></div>
+<div id='myDiv'  style="float:right;"><!-- Plotly chart will be drawn inside this DIV --></div>
 <div>
     <script>
 			var data = [
@@ -72,100 +145,86 @@
 	}
 ];
 
-var layout = { width: 500, height: 500, margin: { t: 0, b: 0 } };
+var layout = { width: 400, height: 450, margin: { t: 0, b: 0 } };
 console.log(layout);
 Plotly.newPlot('myDiv', data, layout);
-<!--if ({{currency}}= '') {-->
-<!--  //  block of code to be executed if the condition is true-->
-<!--} else {-->
-<!--    console.log("inside");-->
-<!--  //  block of code to be executed if the condition is false-->
-<!--  setTimeout(function(){-->
-<!--  },1000)-->
+
 
     </script>
 </div>
 
-<table id="results">
-    <table style="width:100%">
-    <thead>
-    <tr>
-        <th>Currency</th>
-        <th>Time Interval</th>
-        <th>High</th>
-        <th>High Prediction</th>
-        <th>Date Time Hit High</th>
-        <th>Low</th>
-        <th>Low Prediction</th>
-        <th>Date Time Hit Low</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for i in high_low %}
-    <tr>
-        {% for j in i %}
-        <td>{{j}}</td>
-        {% endfor %}
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
-
-
-<table style="width:100%">
-
-    <h2><caption>Historical Data</caption></h2>
-    <tr>
-        <th>Current Time</th>
-        <th>Currency</th>
-        <th>Time Interval</th>
-        <th>Actual High</th>
-        <th>Actual Low</th>
-        <th>Predicted High</th>
-        <th>Predicted Low</th>
-        <th>Target DateTime</th>
-        <th>DateTime Hit High</th>
-        <th>DateTime Hit Low</th>
-    </tr>
-    {% for i in historical_data %}
-    <tr>
-        {% for j in i %}
-        <td>{{j}}</td>
-        {% endfor %}
-    </tr>
-    {% endfor %}
-
-</table>
-
-
-    <div id='myDiv1'><!-- Plotly chart will be drawn inside this DIV --></div>
-	<div>
-		<script>
+<div id='myDiv1'><!-- Plotly chart will be drawn inside this DIV --></div>
+<div>
+    <script>
 				var data = [
 	{
 		domain: { x: [0, 0.5], y: [0.5, 1] },
 		value: {{ Buy }},
-		title: { text: "SELL" },
+		title: { text: "Buy" },
 		type: "indicator",
 		mode: "gauge+number"
 	}
 ];
-var layout = { width: 400, height: 300, margin: { t: 0, b: 1 } };
-Plotly.newPlot('myDiv', data, layout);
-if ({{currency}}= '') {
-  //  block of code to be executed if the condition is true
-} else {
-    console.log("inside");
-  //  block of code to be executed if the condition is false
-  setTimeout(function(){
-  },5000)
+var layout = { width: 400, height: 450, margin: { t: 0, b: 0 } };
+Plotly.newPlot('myDiv1', data, layout);
 
-}
-			</script>
-	</div>
+    </script>
+</div>
+
+<h1>Forex Currency Prediction</h1>
+<table id="customers">
+        <thead>
+        <tr>
+            <th>Currency</th>
+            <th>Time Interval</th>
+            <th>High</th>
+            <th>High Prediction</th>
+            <th>Date Time Hit High</th>
+            <th>Low</th>
+            <th>Low Prediction</th>
+            <th>Date Time Hit Low</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for i in high_low %}
+        <tr>
+            {% for j in i %}
+            <td>{{j}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+        </tbody>
+</table>
+
+<h1>History Prediction Table</h1>
+<table id="hist_table">
+        <thead>
+        <tr>
+            <th>Current Time</th>
+            <th>Currency</th>
+            <th>Time Interval</th>
+            <th>Actual High</th>
+            <th>Actual Low</th>
+            <th>Predicted High</th>
+            <th>Predicted Low</th>
+            <th>Target DateTime</th>
+            <th>DateTime Hit High</th>
+            <th>DateTime Hit Low</th>
+        </tr>
+        {% for i in historical_data %}
+        <tr>
+            {% for j in i %}
+            <td>{{j}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+</table>
 
 
-<script>
+
+
+
+    <script>
 let queryParams = new URLSearchParams(window.location.search);
 <!--let queryParams_ = new URLSearchParams(window.location.search);-->
 
@@ -272,90 +331,91 @@ console.log("This is Seires change currency");
 $selectSeries.on('change', onSeriesChange);
 $selectEpisode.on('change', onEpisodeChange);
 
-</script>
+
+    </script>
 
 
-<!--<script>-->
-<!--let queryParams_ = new URLSearchParams(window.location.search);-->
-<!--let currency_interval = queryParams_.get("interval"); // return john-->
-<!--&lt;!&ndash;let interval = queryParams_.get("interval"); // return sales&ndash;&gt;-->
-<!--console.log("Params" + currency_ );-->
-<!--console.log("Params Interval" + interval );-->
+    <!--<script>-->
+    <!--let queryParams_ = new URLSearchParams(window.location.search);-->
+    <!--let currency_interval = queryParams_.get("interval"); // return john-->
+    <!--&lt;!&ndash;let interval = queryParams_.get("interval"); // return sales&ndash;&gt;-->
+    <!--console.log("Params" + currency_ );-->
+    <!--console.log("Params Interval" + interval );-->
 
-<!--if (currency_interval == null){-->
-<!--const dd = document.getElementById ('interval');-->
-<!--dd.selectedIndex = [...dd.options].findIndex (option => option.text === "&#45;&#45; SELECT &#45;&#45;");-->
-<!--}-->
-<!--else{-->
-<!--const dd = document.getElementById ('interval');-->
-<!--dd.selectedIndex = [...dd.options].findIndex (option => option.text === interval);-->
-<!--}-->
+    <!--if (currency_interval == null){-->
+    <!--const dd = document.getElementById ('interval');-->
+    <!--dd.selectedIndex = [...dd.options].findIndex (option => option.text === "&#45;&#45; SELECT &#45;&#45;");-->
+    <!--}-->
+    <!--else{-->
+    <!--const dd = document.getElementById ('interval');-->
+    <!--dd.selectedIndex = [...dd.options].findIndex (option => option.text === interval);-->
+    <!--}-->
 
-<!--var PAGE_URL = "http://127.0.0.1:8000/"-->
-<!--console.log("This is started");-->
-<!--var $selectSeries = $('#interval');-->
-<!--   console.log($selectSeries);-->
-<!--  $selectEpisode = $('#interval');-->
-<!--  $episodeOptions = $selectEpisode.find('option');-->
-<!--&lt;!&ndash;  $tbody = $('#results tbody');&ndash;&gt;-->
-<!--&lt;!&ndash;  $rows = $tbody.find('tr');&ndash;&gt;-->
+    <!--var PAGE_URL = "http://127.0.0.1:8000/"-->
+    <!--console.log("This is started");-->
+    <!--var $selectSeries = $('#interval');-->
+    <!--   console.log($selectSeries);-->
+    <!--  $selectEpisode = $('#interval');-->
+    <!--  $episodeOptions = $selectEpisode.find('option');-->
+    <!--&lt;!&ndash;  $tbody = $('#results tbody');&ndash;&gt;-->
+    <!--&lt;!&ndash;  $rows = $tbody.find('tr');&ndash;&gt;-->
 
-<!--var params;-->
+    <!--var params;-->
 
-<!--setTimeout(function(){-->
-<!--  var selectedSeries = $selectSeries.val() || '';-->
-<!--  console.log(selectedSeries);-->
-<!--  params = "?currency="+selectedSeries;-->
-<!--  location = PAGE_URL+params;-->
+    <!--setTimeout(function(){-->
+    <!--  var selectedSeries = $selectSeries.val() || '';-->
+    <!--  console.log(selectedSeries);-->
+    <!--  params = "?currency="+selectedSeries;-->
+    <!--  location = PAGE_URL+params;-->
 
-<!--  },10000)-->
+    <!--  },10000)-->
 
-<!--function onSeriesChange() {-->
+    <!--function onSeriesChange() {-->
 
-<!--console.log("This is Seires change currency");-->
-<!--  var selectedSeries = $selectSeries.val() || '';-->
-<!--  console.log(selectedSeries);-->
-<!--  params = "?interval="+selectedSeries;-->
+    <!--console.log("This is Seires change currency");-->
+    <!--  var selectedSeries = $selectSeries.val() || '';-->
+    <!--  console.log(selectedSeries);-->
+    <!--  params = "?interval="+selectedSeries;-->
 
-<!--  console.log(params);-->
-<!--  window.location.replace(PAGE_URL+params);-->
-<!--&lt;!&ndash;    $filteredOptions = $episodeOptions.prop('selected', false).detach();&ndash;&gt;-->
+    <!--  console.log(params);-->
+    <!--  window.location.replace(PAGE_URL+params);-->
+    <!--&lt;!&ndash;    $filteredOptions = $episodeOptions.prop('selected', false).detach();&ndash;&gt;-->
 
 
-<!--&lt;!&ndash;  $filteredOptions = $filteredOptions.filter('[data-series="' + selectedSeries + '"]');&ndash;&gt;-->
-<!--&lt;!&ndash;  $selectEpisode.append($filteredOptions).prop('disabled', $filteredOptions.length == 0);&ndash;&gt;-->
+    <!--&lt;!&ndash;  $filteredOptions = $filteredOptions.filter('[data-series="' + selectedSeries + '"]');&ndash;&gt;-->
+    <!--&lt;!&ndash;  $selectEpisode.append($filteredOptions).prop('disabled', $filteredOptions.length == 0);&ndash;&gt;-->
 
-<!--&lt;!&ndash;  if ($filteredOptions.length) {&ndash;&gt;-->
-<!--&lt;!&ndash;    $filteredOptions.first().prop('selected', true);&ndash;&gt;-->
-<!--&lt;!&ndash;  } else {&ndash;&gt;-->
-<!--&lt;!&ndash;    $selectEpisode.append($episodeOptions.filter('.placeholder')).prop('disabled', true);&ndash;&gt;-->
-<!--&lt;!&ndash;  }&ndash;&gt;-->
+    <!--&lt;!&ndash;  if ($filteredOptions.length) {&ndash;&gt;-->
+    <!--&lt;!&ndash;    $filteredOptions.first().prop('selected', true);&ndash;&gt;-->
+    <!--&lt;!&ndash;  } else {&ndash;&gt;-->
+    <!--&lt;!&ndash;    $selectEpisode.append($episodeOptions.filter('.placeholder')).prop('disabled', true);&ndash;&gt;-->
+    <!--&lt;!&ndash;  }&ndash;&gt;-->
 
-<!--&lt;!&ndash;  filterTable();&ndash;&gt;-->
-<!--}-->
+    <!--&lt;!&ndash;  filterTable();&ndash;&gt;-->
+    <!--}-->
 
-<!--function onEpisodeChange() {-->
-<!--&lt;!&ndash;  filterTable();&ndash;&gt;-->
-<!--}-->
+    <!--function onEpisodeChange() {-->
+    <!--&lt;!&ndash;  filterTable();&ndash;&gt;-->
+    <!--}-->
 
-<!--&lt;!&ndash;function filterTable() {&ndash;&gt;-->
-<!--&lt;!&ndash;  var $filteredRows = $rows.detach(),&ndash;&gt;-->
-<!--&lt;!&ndash;    selectedSeries = $selectSeries.val() || '',&ndash;&gt;-->
-<!--&lt;!&ndash;    selectedEpisode = $selectEpisode.val() || '';&ndash;&gt;-->
+    <!--&lt;!&ndash;function filterTable() {&ndash;&gt;-->
+    <!--&lt;!&ndash;  var $filteredRows = $rows.detach(),&ndash;&gt;-->
+    <!--&lt;!&ndash;    selectedSeries = $selectSeries.val() || '',&ndash;&gt;-->
+    <!--&lt;!&ndash;    selectedEpisode = $selectEpisode.val() || '';&ndash;&gt;-->
 
-<!--&lt;!&ndash;  if (selectedSeries != '') {&ndash;&gt;-->
-<!--&lt;!&ndash;    $filteredRows = $filteredRows.filter('[data-series="' + selectedSeries + '"]');&ndash;&gt;-->
-<!--&lt;!&ndash;    $filteredRows = $filteredRows.filter('[data-episode="' + selectedEpisode + '"]');&ndash;&gt;-->
-<!--&lt;!&ndash;  }&ndash;&gt;-->
+    <!--&lt;!&ndash;  if (selectedSeries != '') {&ndash;&gt;-->
+    <!--&lt;!&ndash;    $filteredRows = $filteredRows.filter('[data-series="' + selectedSeries + '"]');&ndash;&gt;-->
+    <!--&lt;!&ndash;    $filteredRows = $filteredRows.filter('[data-episode="' + selectedEpisode + '"]');&ndash;&gt;-->
+    <!--&lt;!&ndash;  }&ndash;&gt;-->
 
-<!--&lt;!&ndash;  $tbody.append($filteredRows);&ndash;&gt;-->
-<!--&lt;!&ndash;}&ndash;&gt;-->
+    <!--&lt;!&ndash;  $tbody.append($filteredRows);&ndash;&gt;-->
+    <!--&lt;!&ndash;}&ndash;&gt;-->
 
-<!--&lt;!&ndash;filterTable();&ndash;&gt;-->
-<!--$selectSeries.on('change', onSeriesChange);-->
-<!--$selectEpisode.on('change', onEpisodeChange);-->
+    <!--&lt;!&ndash;filterTable();&ndash;&gt;-->
+    <!--$selectSeries.on('change', onSeriesChange);-->
+    <!--$selectEpisode.on('change', onEpisodeChange);-->
 
-<!--</script>-->
+    <!--</script>-->
 
 </body>
 </html>

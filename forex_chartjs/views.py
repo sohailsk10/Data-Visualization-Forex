@@ -39,18 +39,29 @@ class HomeView(View):
             sql_query_buy = "SELECT buy from currency_buy_sell where currency = '" + currency__ + "' "
         cursor.execute(sql_query_buy)
         result_buy = cursor.fetchall()[0][0]
+        print("result_buy", result_buy)
 
         if currency__ == '':
-            sql_query_sell = "SELECT buy from currency_buy_sell where currency = '" + currency + "' "
+            sql_current_price = "SELECT current_price from currency_buy_sell where currency = '" + currency + "' "
         else:
-            sql_query_sell = "SELECT buy from currency_buy_sell where currency = '" + currency__ + "' "
+            sql_current_price= "SELECT current_price from currency_buy_sell where currency = '" + currency__ + "' "
+        cursor.execute(sql_current_price)
+        result_current_price = cursor.fetchall()[0][0]
+        print(result_current_price)
+
+        if currency__ == '':
+            sql_query_sell = "SELECT sell from currency_buy_sell where currency = '" + currency + "' "
+        else:
+            sql_query_sell = "SELECT sell from currency_buy_sell where currency = '" + currency__ + "' "
         cursor.execute(sql_query_sell)
         result_sell = cursor.fetchall()[0][0]
+        print("result_sell", result_sell)
 
         if currency__ == '':
             sql_query_predicted_high_low = "select * from predicted_high_low"
         else:
             sql_query_predicted_high_low = "select * from predicted_high_low where currency = '" + currency__ + "'"
+
 
 
         cursor.execute(sql_query_predicted_high_low)
@@ -69,6 +80,7 @@ class HomeView(View):
 
         currency_ = Currency.objects.all()
         time_interval = Interval.objects.all()
+        print("Time Interval", time_interval)
 
 
         context = {
@@ -78,11 +90,14 @@ class HomeView(View):
             "historical_data": result_historical,
             "Get_currency": currency_,
             "Get_interval": time_interval,
-            "currency":currency__
+            "currency":currency__,
+            "current_price": result_current_price,
         }
 
         return render(request, 'chartjs/demo_v1.html', context)
+        # return render(request, context, template_name)
 
+# def filter_data(request):
 
 class CurrencyViewSet(viewsets.ModelViewSet):
     queryset = Currency.objects.all()
