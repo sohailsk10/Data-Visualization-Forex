@@ -113,7 +113,7 @@
 			var data = [
 	{
 		domain: { x: [0, 0.5], y: [0.5, 1] },
-		value: {{ Sell }},
+		value: {{ result_sell }},
 		title: { text: "Sell" },
 		type: "indicator",
 		mode: "gauge+number"
@@ -133,7 +133,7 @@ Plotly.newPlot('myDiv_sell', data, layout);
 				var data = [
 	{
 		domain: { x: [0, 0.5], y: [0.5, 1] },
-		value: {{ Buy }},
+		value: {{ result_buy }},
 		title: { text: "Buy" },
 		type: "indicator",
 		mode: "gauge+number"
@@ -141,9 +141,6 @@ Plotly.newPlot('myDiv_sell', data, layout);
 ];
 var layout = { width: 400, height: 450, margin: { t: 0, b: 0 } };
 Plotly.newPlot('myDiv_buy', data, layout);
-
-
-
 
         </script>
     </div>
@@ -279,9 +276,6 @@ console.log("This is Seires change currency");
 
 $selectSeries.on('change', onSeriesChange);
 $selectEpisode.on('change', onEpisodeChange);
-
-
-
 </script>
 
 </body>
@@ -290,67 +284,63 @@ $selectEpisode.on('change', onEpisodeChange);
 <script>
 $(document).ready(function () {
             // catch the form's submit event
-            $("#currency").change(function () {
+            $("#currency").change(function ()
+            {
+            var ajaxInterval = setInterval(function(){AjaxCurrentPrice_timer()},200);
                 // create an AJAX call
-                $.ajax({
-                    data: $(this).serialize(),
-                    url: "{% url 'get_currency' %}",
-                    // on success
-                    success: function (response) {
-                        var currency = document.getElementById("currency");
-                        currency.innerHTML = response.Get_currency;
-                    console.log("GET Currency")
-                    },
-                    // on error
-                    error: function (response) {
-                        // alert the error if any error occured
-                        console.log(response.responseJSON.errors)
-                    }
-                });
-                return false;
+            });
+        })
+
+$(document).ready(function () {
+            // catch the form's submit event
+            $("#interval").change(function ()
+            {
+            var ajaxInterval = setInterval(function(){AjaxCurrentPrice_timer()},200);
+                // create an AJAX call
             });
         })
 
 
 var ajaxInterval = setInterval(function(){AjaxCurrentPrice_timer()},200);
-		//var counter = 1;
-
 		function AjaxCurrentPrice_timer()
 		{
 			$.ajax({
-				data: $(this).serialize(),
-                    url: "{% url 'get_current_price' %}",
+				data: $("#refresh_data").serializeArray(),
+                    url: "{% url 'get_currency' %}",
                     // on success
                 success: function (response) {
                          console.log("Inside Get Current price");
                         var element = document.getElementById("para_current_price");
                         element.innerHTML = response.current_price;
-                    },
-                    // on error
-                error: function (response) {
-                        // alert the error if any error occured
-                        console.log(response.responseJSON.errors)
-                    }
-			})
-		}
 
-var ajaxInterval = setInterval(function(){Ajaxget_buy_sell_gauge},200);
-		//var counter = 1;
-
-		function Ajaxget_buy_sell_gauge()
-		{
-			$.ajax({
-				data: $(this).serialize(), // get the form data
-                    url: "{% url 'get_buy_sell_gauge' %}",
-                    // on success
-                success: function (response) {
-                console.log("Inside Gauge");
                         var buy_gauge = document.getElementById("myDiv_buy");
-                        buy_gauge.innerHTML = response.result_buy;
-<!--                        var sell_gauge = document.getElementById("myDiv_sell");-->
-<!--                        sell_gauge.innerHTML = response.result_sell;-->
+                        var data = [
+                            {
+                                domain: { x: [0, 0.5], y: [0.5, 1] },
+                                value: response.result_buy,
+                                title: { text: "Buy" },
+                                type: "indicator",
+                                mode: "gauge+number"
+                            }
+                        ];
+                            var layout = { width: 400, height: 450, margin: { t: 0, b: 0 } };
+                            Plotly.newPlot(buy_gauge, data, layout);
 
+                        var sell_gauge = document.getElementById("myDiv_sell");
+                        var data = [
+                            {
+                                domain: { x: [0, 0.5], y: [0.5, 1] },
+                                value: response.result_sell,
+                                title: { text: "Sell" },
+                                type: "indicator",
+                                mode: "gauge+number"
+                            }
+                        ];
+                        var layout = { width: 400, height: 450, margin: { t: 0, b: 0 } };
+                        Plotly.newPlot(sell_gauge, data, layout);
                     },
+
+
                     // on error
                 error: function (response) {
                         // alert the error if any error occured
@@ -358,49 +348,6 @@ var ajaxInterval = setInterval(function(){Ajaxget_buy_sell_gauge},200);
                     }
 			})
 		}
-
-var ajaxInterval = setInterval(function(){Ajaxget_prediction_tbl_timer()},200);
-		//var counter = 1;
-
-		function Ajaxget_prediction_tbl_timer()
-		{
-			$.ajax({
-				data: $(this).serialize(), // get the form data
-                    url: "{% url 'get_prediction_tbl' %}",
-                    // on success
-                success: function (response) {
-                        var prediction_tbl = document.getElementById("prediction_tbl");
-                        prediction_tbl.innerHTML = response.result_high_low;
-                    },
-                    // on error
-                error: function (response) {
-                        // alert the error if any error occured
-                        console.log(response.responseJSON.errors)
-                    }
-			})
-		}
-
-var ajaxInterval = setInterval(function(){Ajaxget_historical_tbl_timer()},200);
-		//var counter = 1;
-
-		function Ajaxget_historical_tbl_timer()
-		{
-			$.ajax({
-				data: $(this).serialize(), // get the form data
-                    url: "{% url 'get_historical_tbl' %}",
-                    // on success
-                success: function (response) {
-                        var historical_tbl = document.getElementById("hist_table");
-                        historical_tbl.innerHTML = response.result_historical;
-                    },
-                    // on error
-                error: function (response) {
-                        // alert the error if any error occured
-                        console.log(response.responseJSON.errors)
-                    }
-			})
-		}
-
 
 
 </script>
