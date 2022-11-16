@@ -11,7 +11,6 @@ from .models import *
 from rest_framework import viewsets
 
 
-# class HomeView(View):
 def get_data(request):
     mydb = psycopg2.connect(
         database="postgres", user='postgres', password='admin', host='127.0.0.1', port='5432')
@@ -96,11 +95,19 @@ def get_currency(request):
 
     currency = "AUDUSD"
     currency__ = ""
+    interval__ = ""
+
+
     if request.GET.get('currency'):
         currency__ = request.GET.get('currency')
-        print(currency__)
-    print(request.GET)
-    print("CURRENCY--------------------------", currency__)
+
+    if request.GET.get('interval'):
+        interval__ = request.GET.get('interval')
+        interval__ = interval__ + "Min"
+
+    # print(currency__)
+    # print(request.GET)
+    # print("CURRENCY--------------------------", currency__)
 
     if currency__ == '':
         sql_current_price = "SELECT current_price from currency_buy_sell where currency = '" + currency + "' "
@@ -125,10 +132,33 @@ def get_currency(request):
     cursor.execute(sql_query_sell)
     result_sell = cursor.fetchall()[0][0]
 
+    if currency__ == '':
+        sql_query_high_low = "select * from predicted_high_low "
+    else:
+        sql_query_high_low = "select * from predicted_high_low where currency = '" + currency__ + "' "
+    cursor.execute(sql_query_high_low)
+    result_high_low = cursor.fetchall()
+    # print("result_high_low", result_high_low)
+    # print(type(result_high_low))
+
+    if currency__ != '' and interval__ == '':
+        sql_query_historical_data = "Select * from historical_data where currency = '" + currency__ + "'"
+    elif currency__ != '' and interval__ != '':
+        sql_query_historical_data = "Select * from historical_data where currency = '" + currency__ + "' and time_interval = '" + interval__ + "'"
+    else:
+        sql_query_historical_data = "Select * from historical_data"
+
+    cursor.execute(sql_query_historical_data)
+    result_historical = cursor.fetchall()
+    print("result_historical", result_historical)
+    print("result_historical", len(result_historical))
+
     response = {
         'current_price': result_current_price,
         'result_buy': str(result_buy),
         'result_sell': str(result_sell),
+        'result_high_low': result_high_low,
+        'result_historical': result_historical
     }
     return JsonResponse(response)
 

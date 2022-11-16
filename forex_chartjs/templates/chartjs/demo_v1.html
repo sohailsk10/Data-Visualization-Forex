@@ -78,7 +78,6 @@
 <body>
 
 <form id="refresh_data">
-
     <h1>Current Price</h1>
     <div id="current_price">
         <p id="para_current_price" style="font-size: 30px"> {{current_price}} </p>
@@ -110,19 +109,19 @@
     <div id='myDiv_sell' style="float:right;"><!-- Plotly chart will be drawn inside this DIV --></div>
     <div>
         <script>
-			var data = [
-	{
-		domain: { x: [0, 0.5], y: [0.5, 1] },
-		value: {{ result_sell }},
-		title: { text: "Sell" },
-		type: "indicator",
-		mode: "gauge+number"
-	}
-];
+<!--			var data = [-->
+<!--	{-->
+<!--		domain: { x: [0, 0.5], y: [0.5, 1] },-->
+<!--		value: {{ result_sell }},-->
+<!--		title: { text: "Sell" },-->
+<!--		type: "indicator",-->
+<!--		mode: "gauge+number"-->
+<!--	}-->
+<!--];-->
 
-var layout = { width: 400, height: 450, margin: { t: 0, b: 0 } };
-console.log(layout);
-Plotly.newPlot('myDiv_sell', data, layout);
+<!--var layout = { width: 400, height: 450, margin: { t: 0, b: 0 } };-->
+<!--console.log(layout);-->
+<!--Plotly.newPlot('myDiv_sell', data, layout);-->
 
         </script>
     </div>
@@ -130,17 +129,17 @@ Plotly.newPlot('myDiv_sell', data, layout);
     <div id='myDiv_buy'><!-- Plotly chart will be drawn inside this DIV --></div>
     <div>
         <script>
-				var data = [
-	{
-		domain: { x: [0, 0.5], y: [0.5, 1] },
-		value: {{ result_buy }},
-		title: { text: "Buy" },
-		type: "indicator",
-		mode: "gauge+number"
-	}
-];
-var layout = { width: 400, height: 450, margin: { t: 0, b: 0 } };
-Plotly.newPlot('myDiv_buy', data, layout);
+<!--				var data = [-->
+<!--	{-->
+<!--		domain: { x: [0, 0.5], y: [0.5, 1] },-->
+<!--		value: {{ result_buy }},-->
+<!--		title: { text: "Buy" },-->
+<!--		type: "indicator",-->
+<!--		mode: "gauge+number"-->
+<!--	}-->
+<!--];-->
+<!--var layout = { width: 400, height: 450, margin: { t: 0, b: 0 } };-->
+<!--Plotly.newPlot('myDiv_buy', data, layout);-->
 
         </script>
     </div>
@@ -159,8 +158,8 @@ Plotly.newPlot('myDiv_buy', data, layout);
             <th>Date Time Hit Low</th>
         </tr>
         </thead>
-        <tbody>
-        {% for i in high_low %}
+        <tbody id = "pred_tbl_body">
+        {% for i in result_high_low %}
         <tr>
             {% for j in i %}
             <td>{{j}}</td>
@@ -186,7 +185,7 @@ Plotly.newPlot('myDiv_buy', data, layout);
             <th>DateTime Hit Low</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody id = "hist_tbl_body">
         {% for i in result_historical %}
         <tr>
             {% for j in i %}
@@ -201,12 +200,9 @@ Plotly.newPlot('myDiv_buy', data, layout);
 
 <script>
 let queryParams = new URLSearchParams(window.location.search);
-<!--let queryParams_ = new URLSearchParams(window.location.search);-->
 
 let currency_ = queryParams.get("currency"); // return john
 let interval = queryParams.get("interval"); // return sales
-console.log("Params" + currency_ );
-console.log("Params Interval" + interval );
 
 if (currency_ == null){
 const dd = document.getElementById ('currency');
@@ -238,17 +234,6 @@ $episodeOptions = $selectEpisode.find('option');
 
 var params;
 var params_;
-
-<!--setTimeout(function(){-->
-<!--  var selectedSeries = $selectSeries.val() || '';-->
-<!--  var selectedEpisode = $selectEpisode.val() || '';-->
-<!--  console.log(selectedSeries);-->
-<!--&lt;!&ndash;  params = "?currency="+selectedSeries;&ndash;&gt;-->
-<!--  params = "?currency="+selectedSeries+"&interval="+selectedEpisode;-->
-
-<!--  location = PAGE_URL+params;-->
-
-<!--  },5000)-->
 
 function onSeriesChange() {
 console.log("This is Seires change currency");
@@ -310,8 +295,49 @@ var ajaxInterval = setInterval(function(){AjaxCurrentPrice_timer()},200);
                     // on success
                 success: function (response) {
                          console.log("Inside Get Current price");
+
                         var element = document.getElementById("para_current_price");
                         element.innerHTML = response.current_price;
+
+                        var pred_tbl_body = document.getElementById("pred_tbl_body");
+                        console.log(response.result_high_low.length);
+                        var table_data = '';
+                        for(var i = 0; i < response.result_high_low.length; i++) {
+                             var temp1 = "<tr><td>"+response.result_high_low[i][0]+"</td>";
+                             temp1 += "<td>"+response.result_high_low[i][1]+"</td>";
+                             if (response.result_high_low[i][2] == "" || response.result_high_low[i][2] == null){
+                                temp1 += "<td>No Data</td>";
+                             }
+                             else
+                             {
+                                temp1 += "<td>"+response.result_high_low[i][2]+"</td>";
+                             }
+<!--                             temp1 += "<td>"+response.result_high_low[i][2]+"</td>";-->
+                             temp1 += "<td>"+response.result_high_low[i][3]+"</td>";
+                             temp1 += "<td>"+response.result_high_low[i][4]+"</td>";
+                             temp1 += "<td>"+response.result_high_low[i][5]+"</td>";
+                             temp1 += "<td>"+response.result_high_low[i][6]+"</td>";
+                             temp1 += "<td>"+response.result_high_low[i][7]+"</td></tr>";
+                            table_data = table_data+temp1;
+                        }
+                        pred_tbl_body.innerHTML = table_data;
+
+                        var result_historical_ = document.getElementById("hist_tbl_body");
+                        table_data = '';
+                        for(var i = 0; i < response.result_historical.length; i++) {
+                             var temp1 = "<tr><td>"+response.result_historical[i][0]+"</td>";
+                             temp1 += "<td>"+response.result_historical[i][1]+"</td>";
+                             temp1 += "<td>"+response.result_historical[i][2]+"</td>";
+                             temp1 += "<td>"+response.result_historical[i][3]+"</td>";
+                             temp1 += "<td>"+response.result_historical[i][4]+"</td>";
+                             temp1 += "<td>"+response.result_historical[i][5]+"</td>";
+                             temp1 += "<td>"+response.result_historical[i][6]+"</td>";
+                             temp1 += "<td>"+response.result_historical[i][7]+"</td>";
+                             temp1 += "<td>"+response.result_historical[i][8]+"</td>";
+                             temp1 += "<td>"+response.result_historical[i][9]+"</td></tr>";
+                            table_data = table_data+temp1;
+                        }
+                        result_historical_.innerHTML = table_data;
 
                         var buy_gauge = document.getElementById("myDiv_buy");
                         var data = [
@@ -323,10 +349,11 @@ var ajaxInterval = setInterval(function(){AjaxCurrentPrice_timer()},200);
                                 mode: "gauge+number"
                             }
                         ];
-                            var layout = { width: 400, height: 450, margin: { t: 0, b: 0 } };
-                            Plotly.newPlot(buy_gauge, data, layout);
+                        var layout = { width: 400, height: 450, margin: { t: 0, b: 0 } };
+                        Plotly.newPlot(buy_gauge, data, layout);
 
                         var sell_gauge = document.getElementById("myDiv_sell");
+                        console.log("SELL GAUGE ");
                         var data = [
                             {
                                 domain: { x: [0, 0.5], y: [0.5, 1] },
@@ -339,6 +366,7 @@ var ajaxInterval = setInterval(function(){AjaxCurrentPrice_timer()},200);
                         var layout = { width: 400, height: 450, margin: { t: 0, b: 0 } };
                         Plotly.newPlot(sell_gauge, data, layout);
                     },
+
 
 
                     // on error
