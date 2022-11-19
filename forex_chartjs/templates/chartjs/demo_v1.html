@@ -26,12 +26,9 @@
   background-color: #04AA6D;
   color: white;
 }
-
-
-
     </style>
 
-    <style>
+<style>
 #hist_table {
   font-family: Arial, Helvetica, sans-serif;
   border-collapse: collapse;
@@ -55,12 +52,9 @@
   background-color: #04AA6D;
   color: black;
 }
+</style>
 
-
-
-    </style>
-
-    <style>
+<style>
 #current_price {
   border: 2px solid;
   padding: 20px;
@@ -69,14 +63,11 @@
   overflow: auto;
  color:blue;
 }
+</style>
 
-
-
-    </style>
 
 </head>
 <body>
-
 <form id="refresh_data">
     <h1>Current Price</h1>
     <div id="current_price">
@@ -125,6 +116,7 @@
 
         </script>
     </div>
+
 
     <div id='myDiv_buy'><!-- Plotly chart will be drawn inside this DIV --></div>
     <div>
@@ -312,10 +304,24 @@ var ajaxInterval = setInterval(function(){AjaxCurrentPrice_timer()},200);
                              {
                                 temp1 += "<td>"+response.result_high_low[i][2]+"</td>";
                              }
-<!--                             temp1 += "<td>"+response.result_high_low[i][2]+"</td>";-->
                              temp1 += "<td>"+response.result_high_low[i][3]+"</td>";
-                             temp1 += "<td>"+response.result_high_low[i][4]+"</td>";
-                             temp1 += "<td>"+response.result_high_low[i][5]+"</td>";
+
+                             if (response.result_high_low[i][4] == "" || response.result_high_low[i][4] == null){
+                                temp1 += "<td>No Data Hit</td>";
+                             }
+                             else
+                             {
+                                temp1 += "<td>"+response.result_high_low[i][4]+"</td>";
+                             }
+
+                             if (response.result_high_low[i][5] == "" || response.result_high_low[i][5] == null){
+                                temp1 += "<td>No Data</td>";
+                             }
+                             else
+                             {
+                                temp1 += "<td>"+response.result_high_low[i][5]+"</td>";
+                             }
+
                              temp1 += "<td>"+response.result_high_low[i][6]+"</td>";
                              temp1 += "<td>"+response.result_high_low[i][7]+"</td></tr>";
                             table_data = table_data+temp1;
@@ -376,6 +382,47 @@ var ajaxInterval = setInterval(function(){AjaxCurrentPrice_timer()},200);
                     }
 			})
 		}
+        $(document).ready(function(){
+    
+    google.charts.load('current', {'packages':['gauge']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+          ['Label', 'Value'],
+          ['Memory', 80],
+          ['CPU', 55],
+          ['Network', 68]
+        ]);
+
+        var options = {
+          width: 400, height: 120,
+          redFrom: 90, redTo: 100,
+          yellowFrom:75, yellowTo: 90,
+          minorTicks: 5
+        };
+
+        var chart = new google.visualization.Gauge(document.getElementById('chart_div'));
+
+        chart.draw(data, options);
+
+        setInterval(function() {
+          data.setValue(0, 1, 40 + Math.round(60 * Math.random()));
+          chart.draw(data, options);
+        }, 13000);
+        setInterval(function() {
+          data.setValue(1, 1, 40 + Math.round(60 * Math.random()));
+          chart.draw(data, options);
+        }, 5000);
+        setInterval(function() {
+          data.setValue(2, 1, 60 + Math.round(20 * Math.random()));
+          chart.draw(data, options);
+        }, 26000);
+      }
+    
+});
+                        
 
 
 </script>
