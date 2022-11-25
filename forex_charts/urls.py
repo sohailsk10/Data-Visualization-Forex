@@ -21,7 +21,7 @@ from django.urls import include, path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/', views.get_data, name= "get_data"),
-    path('get_currency', views.get_currency, name= "get_currency"),
+    path('get_currency', views.get_currency, name= "get_currency"), 
     # path('get_current_price', views.get_current_price, name= "get_current_price"),
     # path('get_prediction_tbl', views.get_prediction_tbl, name= "get_prediction_tbl"),
     # path('get_buy_sell_gauge', views.get_buy_sell_gauge, name= "get_buy_sell_gauge"),
